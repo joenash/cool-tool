@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name:  Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+      
+      - name: Get version from tags
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Build binaries
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -o cool-tool-darwin-amd64
+          tar -czf cool-tool-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz cool-tool-darwin-amd64
+
+          GOOS=darwin GOARCH=arm64 go build -o cool-tool-darwin-arm64
+          tar -czf cool-tool-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz cool-tool-darwin-arm64
+
+          GOOS=linux GOARCH=amd64 go build -o cool-tool-linux-amd64
+          tar -czf cool-tool-${{ steps.version.outputs.VERSION }}-linux-amd64.tar.gz cool-tool-linux-amd64
+
+      - name: Generate Checksums
+        run: |
+          shasum -a 256 cool-tool-${{ steps.version.outputs.VERSION }}-*.tar.gz > checksums.txt
+          cat checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            cool-tools-${{ steps.versions.outputs.VERSION }}-darwin-amd64.tar.gz
+            cool-tools-${{ steps.versions.outputs.VERSION }}-darwin-arm64.tar.gz
+            cool-tools-${{ steps.versions.outputs.VERSION }}-linux-amd64.tar.gz
+            checksums.txt
+          gemerate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
