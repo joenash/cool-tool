@@ -48,6 +48,6 @@ jobs:
             cool-tools-${{ steps.versions.outputs.VERSION }}-darwin-arm64.tar.gz
             cool-tools-${{ steps.versions.outputs.VERSION }}-linux-amd64.tar.gz
             checksums.txt
-          gemerate_release_notes: true
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
