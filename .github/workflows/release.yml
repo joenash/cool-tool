@@ -44,9 +44,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            cool-tools-${{ steps.versions.outputs.VERSION }}-darwin-amd64.tar.gz
-            cool-tools-${{ steps.versions.outputs.VERSION }}-darwin-arm64.tar.gz
-            cool-tools-${{ steps.versions.outputs.VERSION }}-linux-amd64.tar.gz
+            cool-tools-${{ steps.version.outputs.VERSION }}-darwin-amd64.tar.gz
+            cool-tools-${{ steps.version.outputs.VERSION }}-darwin-arm64.tar.gz
+            cool-tools-${{ steps.version.outputs.VERSION }}-linux-amd64.tar.gz
             checksums.txt
           generate_release_notes: true
         env:
